@@ -232,7 +232,7 @@ pub trait PolynomialCoefs:
         assert!(Self::distance() % 2 == 1);
         // Storage must at least be able to hold the polynomials used in the
         // Berlekamp-Massey algorithm.
-        assert!(self.len() >= Self::syndromes() + 1);
+        assert!(self.len() > Self::syndromes());
     }
 }
 
@@ -317,10 +317,7 @@ impl<P: PolynomialCoefs> Polynomial<P> {
 
     /// Construct a new `Polynomial` with the given polynomials.
     fn with_coefs(coefs: P) -> Self {
-        Polynomial {
-            coefs: coefs,
-            start: 0,
-        }
+        Polynomial { coefs, start: 0 }
     }
 
     /// Retrieve the degree-0 coefficient, c<sub>0</sub>.
@@ -470,9 +467,8 @@ impl<P: PolynomialCoefs> std::ops::Mul<Polynomial<P>> for Polynomial<P> {
 
         for (i, &coef) in self.iter().enumerate() {
             for (j, &mult) in rhs.iter().enumerate() {
-                match out.coefs.get_mut(i + j) {
-                    Some(c) => *c = *c + coef * mult,
-                    None => {}
+                if let Some(c) = out.coefs.get_mut(i + j) {
+                    *c = *c + coef * mult
                 }
             }
         }
@@ -699,33 +695,33 @@ mod test {
 
     #[test]
     fn test_polynomial() {
-        let p = TestPolynomial::new((0..23).map(|i| P25Codeword::for_power(i)));
+        let p = TestPolynomial::new((0..23).map(P25Codeword::for_power));
 
         assert!(p.degree().unwrap() == 22);
         assert!(p.constant() == P25Codeword::for_power(0));
 
-        let p = TestPolynomial::new((1..23).map(|i| P25Codeword::for_power(i)));
+        let p = TestPolynomial::new((1..23).map(P25Codeword::for_power));
         assert!(p.degree().unwrap() == 21);
         assert!(p.constant() == P25Codeword::for_power(1));
 
-        let q = p.clone() * P25Codeword::for_power(0);
+        let q = p * P25Codeword::for_power(0);
         assert!(q.degree().unwrap() == 21);
         assert!(q.constant() == P25Codeword::for_power(1));
 
-        let q = p.clone() * P25Codeword::for_power(2);
+        let q = p * P25Codeword::for_power(2);
         assert!(q.degree().unwrap() == 21);
         assert!(q.constant() == P25Codeword::for_power(3));
 
-        let q = p.clone() + p.clone();
+        let q = p + p;
         assert!(q.constant().zero());
 
         for coef in q.iter() {
             assert!(coef.zero());
         }
 
-        let p = TestPolynomial::new((4..27).map(|i| P25Codeword::for_power(i)));
+        let p = TestPolynomial::new((4..27).map(P25Codeword::for_power));
 
-        let q = TestPolynomial::new((4..26).map(|i| P25Codeword::for_power(i)));
+        let q = TestPolynomial::new((4..26).map(P25Codeword::for_power));
 
         let r = p + q;
 
@@ -749,14 +745,14 @@ mod test {
     fn test_poly_mul() {
         let p = TestPolynomial::new((0..2).map(|_| P25Codeword::for_power(0)));
 
-        let q = p.clone();
+        let q = p;
         let r = p * q;
 
         assert_eq!(r.coef(0).power().unwrap(), 0);
         assert!(r.coef(1).power().is_none());
         assert_eq!(r.coef(2).power().unwrap(), 0);
 
-        let p = TestPolynomial::new((0..3).map(|p| P25Codeword::for_power(p)));
+        let p = TestPolynomial::new((0..3).map(P25Codeword::for_power));
         let q = TestPolynomial::new(
             [P25Codeword::default(), P25Codeword::for_power(0)]
                 .iter()

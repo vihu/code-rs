@@ -143,6 +143,15 @@ pub struct TrellisFSM<S: States> {
     state: usize,
 }
 
+impl<S: States> Default for TrellisFSM<S> {
+    fn default() -> Self {
+        TrellisFSM {
+            states: std::marker::PhantomData,
+            state: 0,
+        }
+    }
+}
+
 impl<S: States> TrellisFSM<S> {
     /// Construct a new `TrellisFSM` at the initial state.
     pub fn new() -> TrellisFSM<S> {
@@ -286,7 +295,7 @@ where
         ViterbiDecoder {
             states: std::marker::PhantomData,
             history: std::marker::PhantomData,
-            src: src,
+            src,
             walks: [W::default(); 2],
             cur: 1,
             prev: 0,
@@ -333,8 +342,8 @@ where
             .map(|(i, w)| (Edge::new(S::pair(i, state)), w))
             .fold((Walk::default(), false), |(walk, amb), (e, w)| {
                 match w.distance.checked_add(input.distance(e)) {
-                    Some(sum) if sum < walk.distance => (walk.replace(&w, sum), false),
-                    Some(sum) if sum == walk.distance => (walk.combine(&w, sum), true),
+                    Some(sum) if sum < walk.distance => (walk.replace(w, sum), false),
+                    Some(sum) if sum == walk.distance => (walk.combine(w, sum), true),
                     _ => (walk, amb),
                 }
             })
@@ -434,13 +443,13 @@ impl<H: WalkHistory> Walk<H> {
 
 impl<H: WalkHistory> Deref for Walk<H> {
     type Target = [Option<usize>];
-    fn deref<'a>(&'a self) -> &'a Self::Target {
+    fn deref(&self) -> &Self::Target {
         &self.history
     }
 }
 
 impl<H: WalkHistory> DerefMut for Walk<H> {
-    fn deref_mut<'a>(&'a mut self) -> &'a mut Self::Target {
+    fn deref_mut(&mut self) -> &mut Self::Target {
         &mut self.history
     }
 }

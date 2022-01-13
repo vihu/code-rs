@@ -38,7 +38,7 @@ pub fn decode(bits: u64) -> Option<(u16, usize)> {
 }
 
 /// Generator matrix from P25, transformed for more efficient codeword generation.
-const GEN: &'static [u16] = &[
+const GEN: &[u16] = &[
     0b1110110001000111,
     0b1001101001100100,
     0b0100110100110010,

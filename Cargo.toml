@@ -1,6 +1,6 @@
 [package]
 name = "code-rs"
-version = "1.0.0"
+version = "1.0.1"
 authors = ["Mick Koch <mick@kochm.co>"]
 edition = "2021"
 description = "Implementation of multiple coding schemes"

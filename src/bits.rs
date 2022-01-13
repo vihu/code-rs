@@ -289,7 +289,7 @@ where
     pub fn new(src: T) -> SubByteIter<P, T> {
         SubByteIter {
             params: std::marker::PhantomData,
-            src: src,
+            src,
             buf: 0,
             idx: 0,
         }

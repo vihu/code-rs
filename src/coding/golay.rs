@@ -39,14 +39,14 @@ mod test {
     #[test]
     fn test_shortened() {
         assert_eq!(shortened::encode(0), 0);
-        assert_eq!(shortened::encode(0b111111), 0b111111_001100101110);
-        assert_eq!(shortened::encode(0b000111), 0b000111_101101000010);
-        assert_eq!(shortened::encode(0b111000), 0b111000_100001101100);
-        assert_eq!(shortened::encode(0b100001), 0b100001_111000100110);
+        assert_eq!(shortened::encode(0b111111), 0b11_1111_0011_0010_1110);
+        assert_eq!(shortened::encode(0b000111), 0b00_0111_1011_0100_0010);
+        assert_eq!(shortened::encode(0b111000), 0b11_1000_1000_0110_1100);
+        assert_eq!(shortened::encode(0b100001), 0b10_0001_1110_0010_0110);
 
         let w = 0b101010;
         let e = shortened::encode(w);
-        assert_eq!(e, 0b101010_001000110101);
+        assert_eq!(e, 0b10_1010_0010_0011_0101);
 
         assert_eq!(shortened::decode(e ^ 0b100000000000000001), Some((w, 2)));
         assert_eq!(shortened::decode(e ^ 0b010000000000000010), Some((w, 2)));

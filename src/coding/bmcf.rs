@@ -173,7 +173,7 @@ impl<P: PolynomialCoefs> PolynomialRoots<P> {
     /// Construct a new `PolynomialRoots` from the given error locator polynomial Λ(x).
     pub fn new(loc: Polynomial<P>) -> Self {
         PolynomialRoots {
-            loc: loc,
+            loc,
             pow: 0..P25Field::size(),
         }
     }
@@ -296,7 +296,7 @@ impl<P: PolynomialCoefs> Errors<P> {
         Some((
             errors,
             Errors {
-                roots: roots,
+                roots,
                 descs: ErrorDescriptions::new(syn, loc),
                 pos: 0..errors,
             },

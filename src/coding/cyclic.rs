@@ -34,7 +34,7 @@ mod test {
     fn test_decode() {
         let w = 0b10101011;
         let e = encode(w);
-        assert_eq!(e, 0b10101011_01111011);
+        assert_eq!(e, 0b1010_1011_0111_1011);
 
         assert_eq!(Some((w, 0)), decode(e ^ 0b0000000000000000));
         assert_eq!(Some((w, 2)), decode(e ^ 0b1000000000000001));
