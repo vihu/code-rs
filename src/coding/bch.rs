@@ -7,8 +7,8 @@ use std;
 
 use binfield_matrix::matrix_mul_systematic;
 
-use coding::galois::{GaloisField, P25Field, P25Codeword, Polynomial, PolynomialCoefs};
-use coding::bmcf;
+use crate::coding::bmcf;
+use crate::coding::galois::{GaloisField, P25Codeword, P25Field, Polynomial, PolynomialCoefs};
 
 /// Encode the given 16 data bits into a 64-bit codeword.
 pub fn encode(word: u16) -> u64 {
@@ -89,7 +89,6 @@ const GEN: &'static [u16] = &[
     0b0000000000000011,
 ];
 
-/// Polynomial coefficients for BCH decoding.
 impl_polynomial_coefs!(BchCoefs, 23);
 
 /// Polynomial with BCH coefficients.
@@ -115,13 +114,12 @@ fn syndromes(word: u64) -> BchPolynomial {
 
 #[cfg(test)]
 mod test {
-    use std;
     use super::*;
     use super::{syndromes, BchCoefs};
-    use coding::galois::{PolynomialCoefs, P25Codeword, Polynomial};
+    use crate::coding::galois::{P25Codeword, Polynomial, PolynomialCoefs};
+    use std;
 
     impl_polynomial_coefs!(TestCoefs, 23, 50);
-    type TestPolynomial = Polynomial<TestCoefs>;
 
     #[test]
     fn validate_coefs() {
@@ -132,72 +130,108 @@ mod test {
     fn verify_gen() {
         // Verify construction of BCH generator polynomial g(x).
 
-        let p = Polynomial::<TestCoefs>::new([
-            P25Codeword::for_power(0),
-            P25Codeword::for_power(0),
-            P25Codeword::for_power(0),
-        ].iter().cloned()) * Polynomial::new([
-            P25Codeword::for_power(0),
-            P25Codeword::default(),
-            P25Codeword::for_power(0),
-            P25Codeword::default(),
-            P25Codeword::for_power(0),
-            P25Codeword::for_power(0),
-            P25Codeword::for_power(0),
-        ].iter().cloned()) * Polynomial::new([
-            P25Codeword::for_power(0),
-            P25Codeword::for_power(0),
-            P25Codeword::default(),
-            P25Codeword::for_power(0),
-            P25Codeword::for_power(0),
-            P25Codeword::default(),
-            P25Codeword::for_power(0),
-        ].iter().cloned()) * Polynomial::new([
-            P25Codeword::for_power(0),
-            P25Codeword::default(),
-            P25Codeword::for_power(0),
-            P25Codeword::for_power(0),
-            P25Codeword::default(),
-            P25Codeword::for_power(0),
-            P25Codeword::for_power(0),
-        ].iter().cloned()) * Polynomial::new([
-            P25Codeword::for_power(0),
-            P25Codeword::default(),
-            P25Codeword::for_power(0),
-            P25Codeword::for_power(0),
-        ].iter().cloned()) * Polynomial::new([
-            P25Codeword::for_power(0),
-            P25Codeword::default(),
-            P25Codeword::default(),
-            P25Codeword::for_power(0),
-            P25Codeword::default(),
-            P25Codeword::default(),
-            P25Codeword::for_power(0),
-        ].iter().cloned()) * Polynomial::new([
-            P25Codeword::for_power(0),
-            P25Codeword::for_power(0),
-            P25Codeword::for_power(0),
-            P25Codeword::default(),
-            P25Codeword::default(),
-            P25Codeword::for_power(0),
-            P25Codeword::for_power(0),
-        ].iter().cloned()) * Polynomial::new([
-            P25Codeword::for_power(0),
-            P25Codeword::for_power(0),
-            P25Codeword::for_power(0),
-            P25Codeword::default(),
-            P25Codeword::for_power(0),
-            P25Codeword::default(),
-            P25Codeword::for_power(0),
-        ].iter().cloned()) * Polynomial::new([
-            P25Codeword::for_power(0),
-            P25Codeword::for_power(0),
-            P25Codeword::default(),
-            P25Codeword::default(),
-            P25Codeword::default(),
-            P25Codeword::default(),
-            P25Codeword::for_power(0),
-        ].iter().cloned());
+        let p = Polynomial::<TestCoefs>::new(
+            [
+                P25Codeword::for_power(0),
+                P25Codeword::for_power(0),
+                P25Codeword::for_power(0),
+            ]
+            .iter()
+            .cloned(),
+        ) * Polynomial::new(
+            [
+                P25Codeword::for_power(0),
+                P25Codeword::default(),
+                P25Codeword::for_power(0),
+                P25Codeword::default(),
+                P25Codeword::for_power(0),
+                P25Codeword::for_power(0),
+                P25Codeword::for_power(0),
+            ]
+            .iter()
+            .cloned(),
+        ) * Polynomial::new(
+            [
+                P25Codeword::for_power(0),
+                P25Codeword::for_power(0),
+                P25Codeword::default(),
+                P25Codeword::for_power(0),
+                P25Codeword::for_power(0),
+                P25Codeword::default(),
+                P25Codeword::for_power(0),
+            ]
+            .iter()
+            .cloned(),
+        ) * Polynomial::new(
+            [
+                P25Codeword::for_power(0),
+                P25Codeword::default(),
+                P25Codeword::for_power(0),
+                P25Codeword::for_power(0),
+                P25Codeword::default(),
+                P25Codeword::for_power(0),
+                P25Codeword::for_power(0),
+            ]
+            .iter()
+            .cloned(),
+        ) * Polynomial::new(
+            [
+                P25Codeword::for_power(0),
+                P25Codeword::default(),
+                P25Codeword::for_power(0),
+                P25Codeword::for_power(0),
+            ]
+            .iter()
+            .cloned(),
+        ) * Polynomial::new(
+            [
+                P25Codeword::for_power(0),
+                P25Codeword::default(),
+                P25Codeword::default(),
+                P25Codeword::for_power(0),
+                P25Codeword::default(),
+                P25Codeword::default(),
+                P25Codeword::for_power(0),
+            ]
+            .iter()
+            .cloned(),
+        ) * Polynomial::new(
+            [
+                P25Codeword::for_power(0),
+                P25Codeword::for_power(0),
+                P25Codeword::for_power(0),
+                P25Codeword::default(),
+                P25Codeword::default(),
+                P25Codeword::for_power(0),
+                P25Codeword::for_power(0),
+            ]
+            .iter()
+            .cloned(),
+        ) * Polynomial::new(
+            [
+                P25Codeword::for_power(0),
+                P25Codeword::for_power(0),
+                P25Codeword::for_power(0),
+                P25Codeword::default(),
+                P25Codeword::for_power(0),
+                P25Codeword::default(),
+                P25Codeword::for_power(0),
+            ]
+            .iter()
+            .cloned(),
+        ) * Polynomial::new(
+            [
+                P25Codeword::for_power(0),
+                P25Codeword::for_power(0),
+                P25Codeword::default(),
+                P25Codeword::default(),
+                P25Codeword::default(),
+                P25Codeword::default(),
+                P25Codeword::for_power(0),
+            ]
+            .iter()
+            .cloned(),
+        );
 
         assert_eq!(p.degree().unwrap(), 47);
 
@@ -206,64 +240,72 @@ mod test {
         for i in 0..=47 {
             let coef = gen >> i & 1;
 
-            assert_eq!(p[i].power(), if coef == 0 {
-                None
-            } else {
-                Some(0)
-            });
+            assert_eq!(p[i].power(), if coef == 0 { None } else { Some(0) });
         }
     }
 
     #[test]
     fn test_encode() {
-        assert_eq!(encode(0b1111111100000000), 0b1111111100000000100100110001000011000010001100000110100001101000);
-        assert_eq!(encode(0b0011)&1, 0);
-        assert_eq!(encode(0b0101)&1, 1);
-        assert_eq!(encode(0b1010)&1, 1);
-        assert_eq!(encode(0b1100)&1, 0);
-        assert_eq!(encode(0b1111)&1, 0);
+        assert_eq!(
+            encode(0b1111111100000000),
+            0b1111111100000000100100110001000011000010001100000110100001101000
+        );
+        assert_eq!(encode(0b0011) & 1, 0);
+        assert_eq!(encode(0b0101) & 1, 1);
+        assert_eq!(encode(0b1010) & 1, 1);
+        assert_eq!(encode(0b1100) & 1, 0);
+        assert_eq!(encode(0b1111) & 1, 0);
     }
 
     #[test]
     fn test_syndromes() {
-        let w = encode(0b1111111100000000)>>1;
+        let w = encode(0b1111111100000000) >> 1;
 
         assert_eq!(syndromes(w).degree(), None);
-        assert_eq!(syndromes(w ^ 1<<60).degree().unwrap(), 21);
+        assert_eq!(syndromes(w ^ 1 << 60).degree().unwrap(), 21);
     }
 
     #[test]
     fn test_decode() {
-        assert!(decode(encode(0b0000111100001111) ^ 1<<63).unwrap() ==
-                (0b0000111100001111, 1));
+        assert!(decode(encode(0b0000111100001111) ^ 1 << 63).unwrap() == (0b0000111100001111, 1));
 
-        assert!(decode(encode(0b1100011111111111) ^ 1).unwrap() ==
-                (0b1100011111111111, 0));
+        assert!(decode(encode(0b1100011111111111) ^ 1).unwrap() == (0b1100011111111111, 0));
 
-        assert!(decode(encode(0b1111111100000000) ^ 0b11010011<<30).unwrap() ==
-                (0b1111111100000000, 5));
+        assert!(
+            decode(encode(0b1111111100000000) ^ 0b11010011 << 30).unwrap()
+                == (0b1111111100000000, 5)
+        );
 
-        assert!(decode(encode(0b1101101101010001) ^ (1<<63 | 1)).unwrap() ==
-                (0b1101101101010001, 1));
+        assert!(
+            decode(encode(0b1101101101010001) ^ (1 << 63 | 1)).unwrap() == (0b1101101101010001, 1)
+        );
 
-        assert!(decode(encode(0b1111111111111111) ^ 0b11111111111).unwrap() ==
-                (0b1111111111111111, 10));
+        assert!(
+            decode(encode(0b1111111111111111) ^ 0b11111111111).unwrap() == (0b1111111111111111, 10)
+        );
 
-        assert!(decode(encode(0b0000000000000000) ^ 0b11111111111).unwrap() ==
-                (0b0000000000000000, 10));
+        assert!(
+            decode(encode(0b0000000000000000) ^ 0b11111111111).unwrap() == (0b0000000000000000, 10)
+        );
 
-        assert!(decode(encode(0b0000111110000000) ^ 0b111111111110).unwrap() ==
-                (0b0000111110000000, 11));
+        assert!(
+            decode(encode(0b0000111110000000) ^ 0b111111111110).unwrap()
+                == (0b0000111110000000, 11)
+        );
 
-        assert!(decode(encode(0b0000111110000000) ^ 0b111111111110).unwrap() ==
-                (0b0000111110000000, 11));
+        assert!(
+            decode(encode(0b0000111110000000) ^ 0b111111111110).unwrap()
+                == (0b0000111110000000, 11)
+        );
 
         assert!(decode(encode(0b0000111110001010) ^ 0b1111111111110).is_none());
         assert!(decode(encode(0b0000001111111111) ^ 0b11111111111111111111110).is_none());
-        assert!(decode(encode(0b0000001111111111) ^
-                       0b00100101010101000010001100100010011111111110).is_none());
+        assert!(decode(
+            encode(0b0000001111111111) ^ 0b00100101010101000010001100100010011111111110
+        )
+        .is_none());
 
-        for i in 0..1u32<<17 {
+        for i in 0..1u32 << 17 {
             assert_eq!(decode(encode(i as u16)).unwrap().0, i as u16);
         }
     }

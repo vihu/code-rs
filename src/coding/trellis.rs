@@ -10,7 +10,7 @@ use std::ops::{Deref, DerefMut};
 
 use collect_slice::CollectSlice;
 
-use bits;
+use crate::bits;
 
 use self::Decision::*;
 
@@ -77,22 +77,26 @@ pub struct DibitStates;
 impl States for DibitStates {
     type Symbol = bits::Dibit;
 
-    fn size() -> usize { 4 }
+    fn size() -> usize {
+        4
+    }
 
     fn pair_idx(cur: usize, next: usize) -> usize {
-        const STATES: [[usize; 4]; 4] = [
-            [0, 15, 12, 3],
-            [4, 11, 8, 7],
-            [13, 2, 1, 14],
-            [9, 6, 5, 10],
-        ];
+        const STATES: [[usize; 4]; 4] =
+            [[0, 15, 12, 3], [4, 11, 8, 7], [13, 2, 1, 14], [9, 6, 5, 10]];
 
         STATES[cur][next]
     }
 
-    fn state(input: bits::Dibit) -> usize { input.bits() as usize }
-    fn finisher() -> Self::Symbol { bits::Dibit::new(0b00) }
-    fn symbol(state: usize) -> Self::Symbol { bits::Dibit::new(state as u8) }
+    fn state(input: bits::Dibit) -> usize {
+        input.bits() as usize
+    }
+    fn finisher() -> Self::Symbol {
+        bits::Dibit::new(0b00)
+    }
+    fn symbol(state: usize) -> Self::Symbol {
+        bits::Dibit::new(state as u8)
+    }
 }
 
 /// 3/4-rate state machine (tribit input).
@@ -101,26 +105,34 @@ pub struct TribitStates;
 impl States for TribitStates {
     type Symbol = bits::Tribit;
 
-    fn size() -> usize { 8 }
+    fn size() -> usize {
+        8
+    }
 
     fn pair_idx(cur: usize, next: usize) -> usize {
         const STATES: [[usize; 8]; 8] = [
-            [0,  8, 4, 12, 2, 10, 6, 14],
-            [4, 12, 2, 10, 6, 14, 0,  8],
-            [1,  9, 5, 13, 3, 11, 7, 15],
-            [5, 13, 3, 11, 7, 15, 1,  9],
-            [3, 11, 7, 15, 1,  9, 5, 13],
-            [7, 15, 1,  9, 5, 13, 3, 11],
-            [2, 10, 6, 14, 0,  8, 4, 12],
-            [6, 14, 0,  8, 4, 12, 2, 10],
+            [0, 8, 4, 12, 2, 10, 6, 14],
+            [4, 12, 2, 10, 6, 14, 0, 8],
+            [1, 9, 5, 13, 3, 11, 7, 15],
+            [5, 13, 3, 11, 7, 15, 1, 9],
+            [3, 11, 7, 15, 1, 9, 5, 13],
+            [7, 15, 1, 9, 5, 13, 3, 11],
+            [2, 10, 6, 14, 0, 8, 4, 12],
+            [6, 14, 0, 8, 4, 12, 2, 10],
         ];
 
         STATES[cur][next]
     }
 
-    fn state(input: bits::Tribit) -> usize { input.bits() as usize }
-    fn finisher() -> Self::Symbol { bits::Tribit::new(0b000) }
-    fn symbol(state: usize) -> Self::Symbol { bits::Tribit::new(state as u8) }
+    fn state(input: bits::Tribit) -> usize {
+        input.bits() as usize
+    }
+    fn finisher() -> Self::Symbol {
+        bits::Tribit::new(0b000)
+    }
+    fn symbol(state: usize) -> Self::Symbol {
+        bits::Tribit::new(state as u8)
+    }
 }
 
 /// Convolutional code finite state machine with the given transition table. Each fed-in
@@ -157,9 +169,7 @@ impl<S: States> TrellisFSM<S> {
     }
 }
 
-pub trait WalkHistory: Copy + Clone + Default +
-    Deref<Target = [Option<usize>]> + DerefMut
-{
+pub trait WalkHistory: Copy + Clone + Default + Deref<Target = [Option<usize>]> + DerefMut {
     /// The length of each walk associated with each state. This also determines the delay
     /// before the first decoded symbol is yielded.
     fn history() -> usize;
@@ -172,15 +182,21 @@ macro_rules! history_type {
 
         impl Deref for $name {
             type Target = [Option<usize>];
-            fn deref<'a>(&'a self) -> &'a Self::Target { &self.0[..] }
+            fn deref<'a>(&'a self) -> &'a Self::Target {
+                &self.0[..]
+            }
         }
 
         impl DerefMut for $name {
-            fn deref_mut<'a>(&'a mut self) -> &'a mut Self::Target { &mut self.0[..] }
+            fn deref_mut<'a>(&'a mut self) -> &'a mut Self::Target {
+                &mut self.0[..]
+            }
         }
 
         impl WalkHistory for $name {
-            fn history() -> usize { $history }
+            fn history() -> usize {
+                $history
+            }
         }
     };
 }
@@ -188,8 +204,8 @@ macro_rules! history_type {
 history_type!(DibitHistory, 4);
 history_type!(TribitHistory, 4);
 
-pub trait Walks<H: WalkHistory>: Copy + Clone + Default +
-    Deref<Target = [Walk<H>]> + DerefMut
+pub trait Walks<H: WalkHistory>:
+    Copy + Clone + Default + Deref<Target = [Walk<H>]> + DerefMut
 {
     fn states() -> usize;
 }
@@ -201,15 +217,21 @@ macro_rules! impl_walks {
 
         impl Deref for $name {
             type Target = [Walk<$hist>];
-            fn deref<'a>(&'a self) -> &'a Self::Target { &self.0[..] }
+            fn deref<'a>(&'a self) -> &'a Self::Target {
+                &self.0[..]
+            }
         }
 
         impl DerefMut for $name {
-            fn deref_mut<'a>(&'a mut self) -> &'a mut Self::Target { &mut self.0[..] }
+            fn deref_mut<'a>(&'a mut self) -> &'a mut Self::Target {
+                &mut self.0[..]
+            }
         }
 
         impl Walks<$hist> for $name {
-            fn states() -> usize { $states }
+            fn states() -> usize {
+                $states
+            }
         }
 
         impl Default for $name {
@@ -231,8 +253,12 @@ impl_walks!(TribitWalks, TribitHistory, 8);
 
 /// Decodes a received convolutional code dibit stream to a nearby codeword using the
 /// truncated Viterbi algorithm.
-pub struct ViterbiDecoder<S, H, W, T> where
-    S: States, H: WalkHistory, W: Walks<H>, T: Iterator<Item = bits::Dibit>
+pub struct ViterbiDecoder<S, H, W, T>
+where
+    S: States,
+    H: WalkHistory,
+    W: Walks<H>,
+    T: Iterator<Item = bits::Dibit>,
 {
     states: std::marker::PhantomData<S>,
     history: std::marker::PhantomData<H>,
@@ -246,8 +272,12 @@ pub struct ViterbiDecoder<S, H, W, T> where
     remain: usize,
 }
 
-impl<S, H, W, T> ViterbiDecoder<S, H, W, T> where
-    S: States, H: WalkHistory, W: Walks<H>, T: Iterator<Item = bits::Dibit>
+impl<S, H, W, T> ViterbiDecoder<S, H, W, T>
+where
+    S: States,
+    H: WalkHistory,
+    W: Walks<H>,
+    T: Iterator<Item = bits::Dibit>,
 {
     /// Construct a new `ViterbiDecoder` over the given dibit source.
     pub fn new(src: T) -> ViterbiDecoder<S, H, W, T> {
@@ -261,7 +291,8 @@ impl<S, H, W, T> ViterbiDecoder<S, H, W, T> where
             cur: 1,
             prev: 0,
             remain: 0,
-        }.prime()
+        }
+        .prime()
     }
 
     fn prime(mut self) -> Self {
@@ -296,7 +327,8 @@ impl<S, H, W, T> ViterbiDecoder<S, H, W, T> where
 
     ///
     fn search(&self, state: usize, input: Edge) -> (Walk<H>, bool) {
-        self.walks[self.prev].iter()
+        self.walks[self.prev]
+            .iter()
             .enumerate()
             .map(|(i, w)| (Edge::new(S::pair(i, state)), w))
             .fold((Walk::default(), false), |(walk, amb), (e, w)| {
@@ -310,20 +342,26 @@ impl<S, H, W, T> ViterbiDecoder<S, H, W, T> where
 
     ///
     fn decode(&self) -> Decision {
-        self.walks[self.cur].iter().fold(Ambiguous(std::usize::MAX), |s, w| {
-            match s {
-                Ambiguous(min) | Definite(min, _) if w.distance < min =>
-                    Definite(w.distance, w[self.remain]),
-                Definite(min, state) if w.distance == min && w[self.remain] != state =>
-                    Ambiguous(w.distance),
+        self.walks[self.cur]
+            .iter()
+            .fold(Ambiguous(std::usize::MAX), |s, w| match s {
+                Ambiguous(min) | Definite(min, _) if w.distance < min => {
+                    Definite(w.distance, w[self.remain])
+                }
+                Definite(min, state) if w.distance == min && w[self.remain] != state => {
+                    Ambiguous(w.distance)
+                }
                 _ => s,
-            }
-        })
+            })
     }
 }
 
-impl<S, H, W, T> Iterator for ViterbiDecoder<S, H, W, T> where
-    S: States, H: WalkHistory, W: Walks<H>, T: Iterator<Item = bits::Dibit>
+impl<S, H, W, T> Iterator for ViterbiDecoder<S, H, W, T>
+where
+    S: States,
+    H: WalkHistory,
+    W: Walks<H>,
+    T: Iterator<Item = bits::Dibit>,
 {
     type Item = Result<S::Symbol, ()>;
 
@@ -350,7 +388,7 @@ enum Decision {
 }
 
 #[derive(Copy, Clone, Debug)]
-pub struct Walk<H: WalkHistory>{
+pub struct Walk<H: WalkHistory> {
     history: H,
     pub distance: usize,
 }
@@ -359,12 +397,9 @@ impl<H: WalkHistory> Walk<H> {
     pub fn new(state: usize) -> Walk<H> {
         Walk {
             history: H::default(),
-            distance: if state == 0 {
-                0
-            } else {
-                std::usize::MAX
-            },
-       }.init(state)
+            distance: if state == 0 { 0 } else { std::usize::MAX },
+        }
+        .init(state)
     }
 
     fn init(mut self, state: usize) -> Self {
@@ -399,15 +434,21 @@ impl<H: WalkHistory> Walk<H> {
 
 impl<H: WalkHistory> Deref for Walk<H> {
     type Target = [Option<usize>];
-    fn deref<'a>(&'a self) -> &'a Self::Target { &self.history }
+    fn deref<'a>(&'a self) -> &'a Self::Target {
+        &self.history
+    }
 }
 
 impl<H: WalkHistory> DerefMut for Walk<H> {
-    fn deref_mut<'a>(&'a mut self) -> &'a mut Self::Target { &mut self.history }
+    fn deref_mut<'a>(&'a mut self) -> &'a mut Self::Target {
+        &mut self.history
+    }
 }
 
 impl<H: WalkHistory> Default for Walk<H> {
-    fn default() -> Self { Walk::new(std::usize::MAX) }
+    fn default() -> Self {
+        Walk::new(std::usize::MAX)
+    }
 }
 
 #[derive(Copy, Clone)]
@@ -425,51 +466,105 @@ impl Edge {
 
 #[cfg(test)]
 mod test {
+    use super::Edge;
     use super::*;
-    use super::{Edge};
     use bits::*;
 
     #[test]
     fn test_dibit_code() {
         let mut fsm = DibitFSM::new();
-        assert_eq!(fsm.feed(Dibit::new(0b00)), (Dibit::new(0b00), Dibit::new(0b10)));
-        assert_eq!(fsm.feed(Dibit::new(0b00)), (Dibit::new(0b00), Dibit::new(0b10)));
-        assert_eq!(fsm.feed(Dibit::new(0b01)), (Dibit::new(0b11), Dibit::new(0b00)));
-        assert_eq!(fsm.feed(Dibit::new(0b01)), (Dibit::new(0b00), Dibit::new(0b00)));
-        assert_eq!(fsm.feed(Dibit::new(0b10)), (Dibit::new(0b11), Dibit::new(0b01)));
-        assert_eq!(fsm.feed(Dibit::new(0b10)), (Dibit::new(0b10), Dibit::new(0b10)));
-        assert_eq!(fsm.feed(Dibit::new(0b11)), (Dibit::new(0b01), Dibit::new(0b00)));
-        assert_eq!(fsm.feed(Dibit::new(0b11)), (Dibit::new(0b10), Dibit::new(0b00)));
+        assert_eq!(
+            fsm.feed(Dibit::new(0b00)),
+            (Dibit::new(0b00), Dibit::new(0b10))
+        );
+        assert_eq!(
+            fsm.feed(Dibit::new(0b00)),
+            (Dibit::new(0b00), Dibit::new(0b10))
+        );
+        assert_eq!(
+            fsm.feed(Dibit::new(0b01)),
+            (Dibit::new(0b11), Dibit::new(0b00))
+        );
+        assert_eq!(
+            fsm.feed(Dibit::new(0b01)),
+            (Dibit::new(0b00), Dibit::new(0b00))
+        );
+        assert_eq!(
+            fsm.feed(Dibit::new(0b10)),
+            (Dibit::new(0b11), Dibit::new(0b01))
+        );
+        assert_eq!(
+            fsm.feed(Dibit::new(0b10)),
+            (Dibit::new(0b10), Dibit::new(0b10))
+        );
+        assert_eq!(
+            fsm.feed(Dibit::new(0b11)),
+            (Dibit::new(0b01), Dibit::new(0b00))
+        );
+        assert_eq!(
+            fsm.feed(Dibit::new(0b11)),
+            (Dibit::new(0b10), Dibit::new(0b00))
+        );
     }
 
     #[test]
     fn test_tribit_code() {
         let mut fsm = TribitFSM::new();
-        assert_eq!(fsm.feed(Tribit::new(0b000)), (Dibit::new(0b00), Dibit::new(0b10)));
-        assert_eq!(fsm.feed(Tribit::new(0b000)), (Dibit::new(0b00), Dibit::new(0b10)));
-        assert_eq!(fsm.feed(Tribit::new(0b001)), (Dibit::new(0b11), Dibit::new(0b01)));
-        assert_eq!(fsm.feed(Tribit::new(0b010)), (Dibit::new(0b01), Dibit::new(0b11)));
-        assert_eq!(fsm.feed(Tribit::new(0b100)), (Dibit::new(0b11), Dibit::new(0b11)));
-        assert_eq!(fsm.feed(Tribit::new(0b101)), (Dibit::new(0b01), Dibit::new(0b01)));
-        assert_eq!(fsm.feed(Tribit::new(0b110)), (Dibit::new(0b11), Dibit::new(0b11)));
-        assert_eq!(fsm.feed(Tribit::new(0b111)), (Dibit::new(0b00), Dibit::new(0b01)));
-        assert_eq!(fsm.feed(Tribit::new(0b000)), (Dibit::new(0b10), Dibit::new(0b11)));
-        assert_eq!(fsm.feed(Tribit::new(0b111)), (Dibit::new(0b01), Dibit::new(0b00)));
+        assert_eq!(
+            fsm.feed(Tribit::new(0b000)),
+            (Dibit::new(0b00), Dibit::new(0b10))
+        );
+        assert_eq!(
+            fsm.feed(Tribit::new(0b000)),
+            (Dibit::new(0b00), Dibit::new(0b10))
+        );
+        assert_eq!(
+            fsm.feed(Tribit::new(0b001)),
+            (Dibit::new(0b11), Dibit::new(0b01))
+        );
+        assert_eq!(
+            fsm.feed(Tribit::new(0b010)),
+            (Dibit::new(0b01), Dibit::new(0b11))
+        );
+        assert_eq!(
+            fsm.feed(Tribit::new(0b100)),
+            (Dibit::new(0b11), Dibit::new(0b11))
+        );
+        assert_eq!(
+            fsm.feed(Tribit::new(0b101)),
+            (Dibit::new(0b01), Dibit::new(0b01))
+        );
+        assert_eq!(
+            fsm.feed(Tribit::new(0b110)),
+            (Dibit::new(0b11), Dibit::new(0b11))
+        );
+        assert_eq!(
+            fsm.feed(Tribit::new(0b111)),
+            (Dibit::new(0b00), Dibit::new(0b01))
+        );
+        assert_eq!(
+            fsm.feed(Tribit::new(0b000)),
+            (Dibit::new(0b10), Dibit::new(0b11))
+        );
+        assert_eq!(
+            fsm.feed(Tribit::new(0b111)),
+            (Dibit::new(0b01), Dibit::new(0b00))
+        );
     }
 
     #[test]
     fn test_edge() {
-        assert_eq!(Edge::new((
-            Dibit::new(0b11), Dibit::new(0b01)
-        )).distance(Edge::new((
-            Dibit::new(0b11), Dibit::new(0b01)
-        ))), 0);
+        assert_eq!(
+            Edge::new((Dibit::new(0b11), Dibit::new(0b01)))
+                .distance(Edge::new((Dibit::new(0b11), Dibit::new(0b01)))),
+            0
+        );
 
-        assert_eq!(Edge::new((
-            Dibit::new(0b11), Dibit::new(0b01)
-        )).distance(Edge::new((
-            Dibit::new(0b00), Dibit::new(0b10)
-        ))), 4);
+        assert_eq!(
+            Edge::new((Dibit::new(0b11), Dibit::new(0b01)))
+                .distance(Edge::new((Dibit::new(0b00), Dibit::new(0b10)))),
+            4
+        );
     }
 
     #[test]
@@ -509,10 +604,7 @@ mod test {
 
     #[test]
     fn test_tribit_decoder() {
-        let bits = [
-            1, 2, 3, 4, 5, 6, 7, 0,
-            1, 2, 3, 4, 5, 6, 7, 0,
-        ];
+        let bits = [1, 2, 3, 4, 5, 6, 7, 0, 1, 2, 3, 4, 5, 6, 7, 0];
         let stream = bits.iter().map(|&bits| Tribit::new(bits));
 
         let mut dibits = vec![];

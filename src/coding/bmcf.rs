@@ -62,7 +62,7 @@ use std;
 
 use collect_slice::CollectSlice;
 
-use coding::galois::{Polynomial, PolynomialCoefs, P25Codeword, P25Field, GaloisField};
+use crate::coding::galois::{GaloisField, P25Codeword, P25Field, Polynomial, PolynomialCoefs};
 
 /// Finds the error location polynomial Λ(x) from the syndrome polynomial s(x).
 ///
@@ -90,7 +90,7 @@ impl<P: PolynomialCoefs> ErrorLocator<P> {
             // Compute 1 + s(x).
             q_saved: Polynomial::new(
                 std::iter::once(P25Codeword::for_power(0))
-                    .chain(syn.iter().take(P::syndromes()).cloned())
+                    .chain(syn.iter().take(P::syndromes()).cloned()),
             ),
             q_cur: syn,
             // Compute x^{2t+1}.
@@ -151,7 +151,7 @@ impl<P: PolynomialCoefs> ErrorLocator<P> {
             (self.p_cur + self.p_saved * mult).shift(),
             2 + std::cmp::min(self.deg_cur, self.deg_saved),
         )
-   }
+    }
 }
 
 /// Finds the roots of the given error locator polynomial Λ(x).
@@ -188,7 +188,9 @@ impl<P: PolynomialCoefs> PolynomialRoots<P> {
 
     /// Compute Λ(α<sup>i</sup>), where i is the current power.
     fn eval(&self) -> P25Codeword {
-        self.loc.iter().fold(P25Codeword::default(), |sum, &x| sum + x)
+        self.loc
+            .iter()
+            .fold(P25Codeword::default(), |sum, &x| sum + x)
     }
 }
 
@@ -291,11 +293,14 @@ impl<P: PolynomialCoefs> Errors<P> {
             return None;
         }
 
-        Some((errors, Errors {
-            roots: roots,
-            descs: ErrorDescriptions::new(syn, loc),
-            pos: 0..errors,
-        }))
+        Some((
+            errors,
+            Errors {
+                roots: roots,
+                descs: ErrorDescriptions::new(syn, loc),
+                pos: 0..errors,
+            },
+        ))
     }
 }
 
@@ -310,10 +315,10 @@ impl<P: PolynomialCoefs> Iterator for Errors<P> {
 
 #[cfg(test)]
 mod test {
-    use std;
-    use collect_slice::CollectSlice;
     use super::*;
-    use coding::galois::{P25Codeword, PolynomialCoefs, Polynomial};
+    use crate::coding::galois::{P25Codeword, Polynomial, PolynomialCoefs};
+    use collect_slice::CollectSlice;
+    use std;
 
     impl_polynomial_coefs!(TestCoefs, 9);
     type TestPolynomial = Polynomial<TestCoefs>;
@@ -321,16 +326,19 @@ mod test {
     #[test]
     fn test_roots() {
         // p(x) = (1+α^42x)(1+α^13x)(1+α^57x)
-        let p = TestPolynomial::new([
-            P25Codeword::for_power(0),
-            P25Codeword::for_power(42),
-        ].iter().cloned()) * TestPolynomial::new([
-            P25Codeword::for_power(0),
-            P25Codeword::for_power(13),
-        ].iter().cloned()) * TestPolynomial::new([
-            P25Codeword::for_power(0),
-            P25Codeword::for_power(57),
-        ].iter().cloned());
+        let p = TestPolynomial::new(
+            [P25Codeword::for_power(0), P25Codeword::for_power(42)]
+                .iter()
+                .cloned(),
+        ) * TestPolynomial::new(
+            [P25Codeword::for_power(0), P25Codeword::for_power(13)]
+                .iter()
+                .cloned(),
+        ) * TestPolynomial::new(
+            [P25Codeword::for_power(0), P25Codeword::for_power(57)]
+                .iter()
+                .cloned(),
+        );
 
         let mut r = PolynomialRoots::new(p);
         let mut roots = [P25Codeword::default(); 3];

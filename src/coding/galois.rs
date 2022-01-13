@@ -13,76 +13,25 @@ pub type P25Codeword = Codeword<P25Field>;
 pub struct P25Field;
 
 impl GaloisField for P25Field {
-    fn size() -> usize { 63 }
-    fn valid_codeword(bits: u8) -> bool { bits >> 6 == 0 }
+    fn size() -> usize {
+        63
+    }
+    fn valid_codeword(bits: u8) -> bool {
+        bits >> 6 == 0
+    }
 
     fn codeword(pow: usize) -> u8 {
         // Each codeword α^i represents the polynomial x^i mod h(x), where P25 uses h(x) =
         // x^6 + x + 1.
         const CODEWORDS: [u8; 63] = [
-            0b000001,
-            0b000010,
-            0b000100,
-            0b001000,
-            0b010000,
-            0b100000,
-            0b000011,
-            0b000110,
-            0b001100,
-            0b011000,
-            0b110000,
-            0b100011,
-            0b000101,
-            0b001010,
-            0b010100,
-            0b101000,
-            0b010011,
-            0b100110,
-            0b001111,
-            0b011110,
-            0b111100,
-            0b111011,
-            0b110101,
-            0b101001,
-            0b010001,
-            0b100010,
-            0b000111,
-            0b001110,
-            0b011100,
-            0b111000,
-            0b110011,
-            0b100101,
-            0b001001,
-            0b010010,
-            0b100100,
-            0b001011,
-            0b010110,
-            0b101100,
-            0b011011,
-            0b110110,
-            0b101111,
-            0b011101,
-            0b111010,
-            0b110111,
-            0b101101,
-            0b011001,
-            0b110010,
-            0b100111,
-            0b001101,
-            0b011010,
-            0b110100,
-            0b101011,
-            0b010101,
-            0b101010,
-            0b010111,
-            0b101110,
-            0b011111,
-            0b111110,
-            0b111111,
-            0b111101,
-            0b111001,
-            0b110001,
-            0b100001,
+            0b000001, 0b000010, 0b000100, 0b001000, 0b010000, 0b100000, 0b000011, 0b000110,
+            0b001100, 0b011000, 0b110000, 0b100011, 0b000101, 0b001010, 0b010100, 0b101000,
+            0b010011, 0b100110, 0b001111, 0b011110, 0b111100, 0b111011, 0b110101, 0b101001,
+            0b010001, 0b100010, 0b000111, 0b001110, 0b011100, 0b111000, 0b110011, 0b100101,
+            0b001001, 0b010010, 0b100100, 0b001011, 0b010110, 0b101100, 0b011011, 0b110110,
+            0b101111, 0b011101, 0b111010, 0b110111, 0b101101, 0b011001, 0b110010, 0b100111,
+            0b001101, 0b011010, 0b110100, 0b101011, 0b010101, 0b101010, 0b010111, 0b101110,
+            0b011111, 0b111110, 0b111111, 0b111101, 0b111001, 0b110001, 0b100001,
         ];
 
         CODEWORDS[pow]
@@ -90,69 +39,9 @@ impl GaloisField for P25Field {
 
     fn power(codeword: usize) -> usize {
         const POWERS: [usize; 63] = [
-            0,
-            1,
-            6,
-            2,
-            12,
-            7,
-            26,
-            3,
-            32,
-            13,
-            35,
-            8,
-            48,
-            27,
-            18,
-            4,
-            24,
-            33,
-            16,
-            14,
-            52,
-            36,
-            54,
-            9,
-            45,
-            49,
-            38,
-            28,
-            41,
-            19,
-            56,
-            5,
-            62,
-            25,
-            11,
-            34,
-            31,
-            17,
-            47,
-            15,
-            23,
-            53,
-            51,
-            37,
-            44,
-            55,
-            40,
-            10,
-            61,
-            46,
-            30,
-            50,
-            22,
-            39,
-            43,
-            29,
-            60,
-            42,
-            21,
-            20,
-            59,
-            57,
-            58,
+            0, 1, 6, 2, 12, 7, 26, 3, 32, 13, 35, 8, 48, 27, 18, 4, 24, 33, 16, 14, 52, 36, 54, 9,
+            45, 49, 38, 28, 41, 19, 56, 5, 62, 25, 11, 34, 31, 17, 47, 15, 23, 53, 51, 37, 44, 55,
+            40, 10, 61, 46, 30, 50, 22, 39, 43, 29, 60, 42, 21, 20, 59, 57, 58,
         ];
 
         POWERS[codeword]
@@ -203,10 +92,14 @@ impl<F: GaloisField> Codeword<F> {
     }
 
     /// Retrieve the bit pattern of the codeword.
-    pub fn bits(&self) -> u8 { self.bits }
+    pub fn bits(&self) -> u8 {
+        self.bits
+    }
 
     /// Check if the codeword is zero.
-    pub fn zero(&self) -> bool { self.bits == 0 }
+    pub fn zero(&self) -> bool {
+        self.bits == 0
+    }
 
     /// Retrieve the power i of the current codeword α<sup>i</sup>. Return `Some(i)` if
     /// the power is defined and `None` if the codeword is zero.
@@ -315,8 +208,8 @@ impl<F: GaloisField> std::fmt::Debug for Codeword<F> {
 }
 
 /// Coefficient storage for a bounded-degree Galois polynomial of a particular code.
-pub trait PolynomialCoefs: Default + Copy + Clone +
-    std::ops::Deref<Target = [P25Codeword]> + std::ops::DerefMut
+pub trait PolynomialCoefs:
+    Default + Copy + Clone + std::ops::Deref<Target = [P25Codeword]> + std::ops::DerefMut
 {
     /// The minimum Hamming distance, d, in (n,k,d).
     fn distance() -> usize;
@@ -329,7 +222,9 @@ pub trait PolynomialCoefs: Default + Copy + Clone +
     }
 
     /// Number of syndromes: 2t.
-    fn syndromes() -> usize { 2 * Self::errors() }
+    fn syndromes() -> usize {
+        2 * Self::errors()
+    }
 
     /// Verify the implementer is well-formed.
     fn validate(&self) {
@@ -353,7 +248,9 @@ macro_rules! impl_polynomial_coefs {
         struct $name([P25Codeword; $len]);
 
         impl PolynomialCoefs for $name {
-            fn distance() -> usize { $dist }
+            fn distance() -> usize {
+                $dist
+            }
         }
 
         impl Default for $name {
@@ -372,11 +269,15 @@ macro_rules! impl_polynomial_coefs {
 
         impl std::ops::Deref for $name {
             type Target = [P25Codeword];
-            fn deref(&self) -> &Self::Target { &self.0[..] }
+            fn deref(&self) -> &Self::Target {
+                &self.0[..]
+            }
         }
 
         impl std::ops::DerefMut for $name {
-            fn deref_mut(&mut self) -> &mut Self::Target { &mut self.0[..] }
+            fn deref_mut(&mut self) -> &mut Self::Target {
+                &mut self.0[..]
+            }
         }
     };
 }
@@ -474,7 +375,9 @@ impl<P: PolynomialCoefs> Polynomial<P> {
     pub fn eval(&self, x: P25Codeword) -> P25Codeword {
         // This uses Horner's method which, unlike the naive method, doesn't require a
         // call to `pow()` at each term.
-        self.iter().rev().fold(P25Codeword::default(), |s, &coef| s * x + coef)
+        self.iter()
+            .rev()
+            .fold(P25Codeword::default(), |s, &coef| s * x + coef)
     }
 
     /// Truncate the polynomial so that deg(p(x)) ≤ d, where d is the given degree.
@@ -513,11 +416,15 @@ impl<P: PolynomialCoefs> Default for Polynomial<P> {
 /// c<sub>1</sub>, ...].
 impl<P: PolynomialCoefs> std::ops::Deref for Polynomial<P> {
     type Target = [P25Codeword];
-    fn deref(&self) -> &Self::Target { &self.coefs[self.start..] }
+    fn deref(&self) -> &Self::Target {
+        &self.coefs[self.start..]
+    }
 }
 
 impl<P: PolynomialCoefs> std::ops::DerefMut for Polynomial<P> {
-    fn deref_mut(&mut self) -> &mut Self::Target { &mut self.coefs[self.start..] }
+    fn deref_mut(&mut self) -> &mut Self::Target {
+        &mut self.coefs[self.start..]
+    }
 }
 
 /// Add polynomials using Galois addition for coefficients.
@@ -565,7 +472,7 @@ impl<P: PolynomialCoefs> std::ops::Mul<Polynomial<P>> for Polynomial<P> {
             for (j, &mult) in rhs.iter().enumerate() {
                 match out.coefs.get_mut(i + j) {
                     Some(c) => *c = *c + coef * mult,
-                    None => {},
+                    None => {}
                 }
             }
         }
@@ -582,8 +489,8 @@ impl<P: PolynomialCoefs> std::fmt::Debug for Polynomial<P> {
 
 #[cfg(test)]
 mod test {
-    use std;
     use super::*;
+    use std;
 
     impl_polynomial_coefs!(TestCoefs, 23);
     type TestPolynomial = Polynomial<TestCoefs>;
@@ -626,7 +533,6 @@ mod test {
         assert!((P25Codeword::new(0b101111) * P25Codeword::new(0b101111)) == 0b100110);
     }
 
-
     #[test]
     fn test_div() {
         assert!((P25Codeword::new(0b001000) / P25Codeword::new(0b000101)) == 0b010111);
@@ -650,122 +556,136 @@ mod test {
 
     #[test]
     fn test_eval() {
-        let p = TestPolynomial::new((0..3).map(|_| {
-            P25Codeword::for_power(0)
-        }));
+        let p = TestPolynomial::new((0..3).map(|_| P25Codeword::for_power(0)));
         assert!(p.eval(P25Codeword::for_power(1)) == 0b000111);
 
-        let p = TestPolynomial::new((0..2).map(|_| {
-            P25Codeword::for_power(0)
-        }));
+        let p = TestPolynomial::new((0..2).map(|_| P25Codeword::for_power(0)));
         assert_eq!(p.eval(P25Codeword::for_power(1)), 0b000011);
 
-        let p = TestPolynomial::new([
-            P25Codeword::default(),
-            P25Codeword::default(),
-            P25Codeword::default(),
-            P25Codeword::for_power(0),
-        ].iter().cloned());
+        let p = TestPolynomial::new(
+            [
+                P25Codeword::default(),
+                P25Codeword::default(),
+                P25Codeword::default(),
+                P25Codeword::for_power(0),
+            ]
+            .iter()
+            .cloned(),
+        );
         assert_eq!(p.eval(P25Codeword::for_power(3)), 0b011000);
 
-        let p = TestPolynomial::new([
-            P25Codeword::default(),
-            P25Codeword::for_power(0),
-            P25Codeword::default(),
-            P25Codeword::for_power(0),
-        ].iter().cloned());
+        let p = TestPolynomial::new(
+            [
+                P25Codeword::default(),
+                P25Codeword::for_power(0),
+                P25Codeword::default(),
+                P25Codeword::for_power(0),
+            ]
+            .iter()
+            .cloned(),
+        );
         assert_eq!(p.eval(P25Codeword::for_power(3)), 0b010000);
 
-        let p = TestPolynomial::new([
-            P25Codeword::default(),
-            P25Codeword::default(),
-            P25Codeword::default(),
-            P25Codeword::default(),
-            P25Codeword::default(),
-            P25Codeword::default(),
-            P25Codeword::default(),
-            P25Codeword::default(),
-            P25Codeword::default(),
-            P25Codeword::default(),
-            P25Codeword::default(),
-            P25Codeword::default(),
-            P25Codeword::default(),
-            P25Codeword::default(),
-            P25Codeword::default(),
-            P25Codeword::default(),
-            P25Codeword::default(),
-            P25Codeword::default(),
-            P25Codeword::default(),
-            P25Codeword::default(),
-            P25Codeword::default(),
-            P25Codeword::default(),
-            P25Codeword::default(),
-            P25Codeword::for_power(5),
-        ].iter().cloned());
+        let p = TestPolynomial::new(
+            [
+                P25Codeword::default(),
+                P25Codeword::default(),
+                P25Codeword::default(),
+                P25Codeword::default(),
+                P25Codeword::default(),
+                P25Codeword::default(),
+                P25Codeword::default(),
+                P25Codeword::default(),
+                P25Codeword::default(),
+                P25Codeword::default(),
+                P25Codeword::default(),
+                P25Codeword::default(),
+                P25Codeword::default(),
+                P25Codeword::default(),
+                P25Codeword::default(),
+                P25Codeword::default(),
+                P25Codeword::default(),
+                P25Codeword::default(),
+                P25Codeword::default(),
+                P25Codeword::default(),
+                P25Codeword::default(),
+                P25Codeword::default(),
+                P25Codeword::default(),
+                P25Codeword::for_power(5),
+            ]
+            .iter()
+            .cloned(),
+        );
         assert_eq!(p.eval(P25Codeword::for_power(4)), 0b100100);
 
-        let p = TestPolynomial::new([
-            P25Codeword::for_power(12),
-            P25Codeword::default(),
-            P25Codeword::default(),
-            P25Codeword::default(),
-            P25Codeword::default(),
-            P25Codeword::default(),
-            P25Codeword::default(),
-            P25Codeword::default(),
-            P25Codeword::default(),
-            P25Codeword::default(),
-            P25Codeword::default(),
-            P25Codeword::default(),
-            P25Codeword::default(),
-            P25Codeword::default(),
-            P25Codeword::default(),
-            P25Codeword::default(),
-            P25Codeword::default(),
-            P25Codeword::default(),
-            P25Codeword::default(),
-            P25Codeword::default(),
-            P25Codeword::default(),
-            P25Codeword::default(),
-            P25Codeword::default(),
-            P25Codeword::for_power(5),
-        ].iter().cloned());
+        let p = TestPolynomial::new(
+            [
+                P25Codeword::for_power(12),
+                P25Codeword::default(),
+                P25Codeword::default(),
+                P25Codeword::default(),
+                P25Codeword::default(),
+                P25Codeword::default(),
+                P25Codeword::default(),
+                P25Codeword::default(),
+                P25Codeword::default(),
+                P25Codeword::default(),
+                P25Codeword::default(),
+                P25Codeword::default(),
+                P25Codeword::default(),
+                P25Codeword::default(),
+                P25Codeword::default(),
+                P25Codeword::default(),
+                P25Codeword::default(),
+                P25Codeword::default(),
+                P25Codeword::default(),
+                P25Codeword::default(),
+                P25Codeword::default(),
+                P25Codeword::default(),
+                P25Codeword::default(),
+                P25Codeword::for_power(5),
+            ]
+            .iter()
+            .cloned(),
+        );
         assert_eq!(p.eval(P25Codeword::for_power(4)), 0b100001);
 
-        let p = TestPolynomial::new([
-            P25Codeword::for_power(0),
-            P25Codeword::for_power(0),
-            P25Codeword::for_power(0),
-            P25Codeword::for_power(0),
-            P25Codeword::for_power(0),
-            P25Codeword::for_power(0),
-            P25Codeword::for_power(0),
-            P25Codeword::for_power(0),
-            P25Codeword::for_power(0),
-            P25Codeword::for_power(0),
-            P25Codeword::for_power(0),
-            P25Codeword::for_power(0),
-            P25Codeword::for_power(0),
-            P25Codeword::for_power(0),
-            P25Codeword::for_power(0),
-            P25Codeword::for_power(0),
-            P25Codeword::for_power(0),
-            P25Codeword::for_power(0),
-            P25Codeword::for_power(0),
-            P25Codeword::for_power(0),
-            P25Codeword::for_power(0),
-            P25Codeword::for_power(0),
-            P25Codeword::for_power(0),
-            P25Codeword::for_power(0),
-        ].iter().cloned());
+        let p = TestPolynomial::new(
+            [
+                P25Codeword::for_power(0),
+                P25Codeword::for_power(0),
+                P25Codeword::for_power(0),
+                P25Codeword::for_power(0),
+                P25Codeword::for_power(0),
+                P25Codeword::for_power(0),
+                P25Codeword::for_power(0),
+                P25Codeword::for_power(0),
+                P25Codeword::for_power(0),
+                P25Codeword::for_power(0),
+                P25Codeword::for_power(0),
+                P25Codeword::for_power(0),
+                P25Codeword::for_power(0),
+                P25Codeword::for_power(0),
+                P25Codeword::for_power(0),
+                P25Codeword::for_power(0),
+                P25Codeword::for_power(0),
+                P25Codeword::for_power(0),
+                P25Codeword::for_power(0),
+                P25Codeword::for_power(0),
+                P25Codeword::for_power(0),
+                P25Codeword::for_power(0),
+                P25Codeword::for_power(0),
+                P25Codeword::for_power(0),
+            ]
+            .iter()
+            .cloned(),
+        );
         assert!(p.eval(P25Codeword::for_power(0)).zero());
     }
 
     #[test]
     fn test_truncate() {
-        let p = TestPolynomial::new((0..5).map(|_| {
-            P25Codeword::for_power(0)
-        }));
+        let p = TestPolynomial::new((0..5).map(|_| P25Codeword::for_power(0)));
 
         assert_eq!(p.degree().unwrap(), 4);
         assert_eq!(p.coefs[4].power().unwrap(), 0);
@@ -779,16 +699,12 @@ mod test {
 
     #[test]
     fn test_polynomial() {
-        let p = TestPolynomial::new((0..23).map(|i| {
-            P25Codeword::for_power(i)
-        }));
+        let p = TestPolynomial::new((0..23).map(|i| P25Codeword::for_power(i)));
 
         assert!(p.degree().unwrap() == 22);
         assert!(p.constant() == P25Codeword::for_power(0));
 
-        let p = TestPolynomial::new((1..23).map(|i| {
-            P25Codeword::for_power(i)
-        }));
+        let p = TestPolynomial::new((1..23).map(|i| P25Codeword::for_power(i)));
         assert!(p.degree().unwrap() == 21);
         assert!(p.constant() == P25Codeword::for_power(1));
 
@@ -807,13 +723,9 @@ mod test {
             assert!(coef.zero());
         }
 
-        let p = TestPolynomial::new((4..27).map(|i| {
-            P25Codeword::for_power(i)
-        }));
+        let p = TestPolynomial::new((4..27).map(|i| P25Codeword::for_power(i)));
 
-        let q = TestPolynomial::new((4..26).map(|i| {
-            P25Codeword::for_power(i)
-        }));
+        let q = TestPolynomial::new((4..26).map(|i| P25Codeword::for_power(i)));
 
         let r = p + q;
 
@@ -824,13 +736,9 @@ mod test {
         assert!(r.coefs[4].zero());
         assert!(!r.coefs[22].zero());
 
-        let p = TestPolynomial::new((0..2).map(|_| {
-            P25Codeword::for_power(0)
-        }));
+        let p = TestPolynomial::new((0..2).map(|_| P25Codeword::for_power(0)));
 
-        let q = TestPolynomial::new((0..4).map(|_| {
-            P25Codeword::for_power(1)
-        }));
+        let q = TestPolynomial::new((0..4).map(|_| P25Codeword::for_power(1)));
 
         let r = p + q;
 
@@ -839,9 +747,7 @@ mod test {
 
     #[test]
     fn test_poly_mul() {
-        let p = TestPolynomial::new((0..2).map(|_| {
-            P25Codeword::for_power(0)
-        }));
+        let p = TestPolynomial::new((0..2).map(|_| P25Codeword::for_power(0)));
 
         let q = p.clone();
         let r = p * q;
@@ -850,13 +756,12 @@ mod test {
         assert!(r.coef(1).power().is_none());
         assert_eq!(r.coef(2).power().unwrap(), 0);
 
-        let p = TestPolynomial::new((0..3).map(|p| {
-            P25Codeword::for_power(p)
-        }));
-        let q = TestPolynomial::new([
-            P25Codeword::default(),
-            P25Codeword::for_power(0),
-        ].iter().cloned());
+        let p = TestPolynomial::new((0..3).map(|p| P25Codeword::for_power(p)));
+        let q = TestPolynomial::new(
+            [P25Codeword::default(), P25Codeword::for_power(0)]
+                .iter()
+                .cloned(),
+        );
         let r = p * q;
 
         assert!(r.coef(0).power().is_none());
@@ -867,11 +772,14 @@ mod test {
 
     #[test]
     fn test_deriv() {
-        let p = TestPolynomial::new([
-            P25Codeword::for_power(0),
-            P25Codeword::for_power(3),
-            P25Codeword::for_power(58),
-        ].into_iter().cloned());
+        let p = TestPolynomial::new(
+            [
+                P25Codeword::for_power(0),
+                P25Codeword::for_power(3),
+                P25Codeword::for_power(58),
+            ]
+            .into_iter(),
+        );
 
         let q = p.deriv();
 
@@ -879,12 +787,15 @@ mod test {
         assert!(q.coefs[1] == P25Codeword::default());
         assert!(q.coefs[2] == P25Codeword::default());
 
-        let p = TestPolynomial::new([
-            P25Codeword::default(),
-            P25Codeword::for_power(5),
-            P25Codeword::for_power(3),
-            P25Codeword::for_power(58),
-        ].into_iter().cloned());
+        let p = TestPolynomial::new(
+            [
+                P25Codeword::default(),
+                P25Codeword::for_power(5),
+                P25Codeword::for_power(3),
+                P25Codeword::for_power(58),
+            ]
+            .into_iter(),
+        );
 
         let q = p.shift().deriv();
 
@@ -892,12 +803,16 @@ mod test {
         assert!(q.coef(1) == P25Codeword::default());
         assert!(q.coef(2) == P25Codeword::default());
 
-        let p = TestPolynomial::new([
-            P25Codeword::for_power(0),
-            P25Codeword::for_power(5),
-            P25Codeword::for_power(3),
-            P25Codeword::for_power(58),
-        ].into_iter().cloned()).deriv();
+        let p = TestPolynomial::new(
+            [
+                P25Codeword::for_power(0),
+                P25Codeword::for_power(5),
+                P25Codeword::for_power(3),
+                P25Codeword::for_power(58),
+            ]
+            .into_iter(),
+        )
+        .deriv();
 
         assert!(p.coef(0) == P25Codeword::for_power(5));
         assert!(p.coef(1) == P25Codeword::default());
@@ -905,13 +820,17 @@ mod test {
         assert!(p.coef(3) == P25Codeword::default());
         assert!(p.coef(4) == P25Codeword::default());
 
-        let p = TestPolynomial::new([
-            P25Codeword::for_power(0),
-            P25Codeword::for_power(5),
-            P25Codeword::for_power(3),
-            P25Codeword::for_power(58),
-            P25Codeword::for_power(43),
-        ].into_iter().cloned()).deriv();
+        let p = TestPolynomial::new(
+            [
+                P25Codeword::for_power(0),
+                P25Codeword::for_power(5),
+                P25Codeword::for_power(3),
+                P25Codeword::for_power(58),
+                P25Codeword::for_power(43),
+            ]
+            .into_iter(),
+        )
+        .deriv();
 
         assert!(p.coef(0) == P25Codeword::for_power(5));
         assert!(p.coef(1) == P25Codeword::default());
@@ -920,14 +839,18 @@ mod test {
         assert!(p.coef(4) == P25Codeword::default());
         assert!(p.coef(5) == P25Codeword::default());
 
-        let p = TestPolynomial::new([
-            P25Codeword::for_power(0),
-            P25Codeword::for_power(5),
-            P25Codeword::for_power(3),
-            P25Codeword::for_power(58),
-            P25Codeword::for_power(43),
-            P25Codeword::for_power(15),
-        ].into_iter().cloned()).deriv();
+        let p = TestPolynomial::new(
+            [
+                P25Codeword::for_power(0),
+                P25Codeword::for_power(5),
+                P25Codeword::for_power(3),
+                P25Codeword::for_power(58),
+                P25Codeword::for_power(43),
+                P25Codeword::for_power(15),
+            ]
+            .into_iter(),
+        )
+        .deriv();
 
         assert!(p.coef(0) == P25Codeword::for_power(5));
         assert!(p.coef(1) == P25Codeword::default());
@@ -936,13 +859,17 @@ mod test {
         assert!(p.coef(4) == P25Codeword::for_power(15));
         assert!(p.coef(5) == P25Codeword::default());
 
-        let p = ShortPolynomial::new([
-            P25Codeword::for_power(0),
-            P25Codeword::for_power(5),
-            P25Codeword::for_power(3),
-            P25Codeword::for_power(58),
-            P25Codeword::for_power(43),
-        ].into_iter().cloned()).deriv();
+        let p = ShortPolynomial::new(
+            [
+                P25Codeword::for_power(0),
+                P25Codeword::for_power(5),
+                P25Codeword::for_power(3),
+                P25Codeword::for_power(58),
+                P25Codeword::for_power(43),
+            ]
+            .into_iter(),
+        )
+        .deriv();
 
         assert!(p.coef(0) == P25Codeword::for_power(5));
         assert!(p.coef(1) == P25Codeword::default());
@@ -950,32 +877,36 @@ mod test {
         assert!(p.coef(3) == P25Codeword::default());
         assert!(p.coef(4) == P25Codeword::default());
 
-        let p = TestPolynomial::new([
-            P25Codeword::for_power(0),
-            P25Codeword::for_power(5),
-            P25Codeword::for_power(3),
-            P25Codeword::for_power(58),
-            P25Codeword::for_power(43),
-            P25Codeword::for_power(15),
-            P25Codeword::for_power(5),
-            P25Codeword::for_power(3),
-            P25Codeword::for_power(58),
-            P25Codeword::for_power(43),
-            P25Codeword::for_power(15),
-            P25Codeword::for_power(5),
-            P25Codeword::for_power(3),
-            P25Codeword::for_power(58),
-            P25Codeword::for_power(43),
-            P25Codeword::for_power(15),
-            P25Codeword::for_power(5),
-            P25Codeword::for_power(3),
-            P25Codeword::for_power(58),
-            P25Codeword::for_power(43),
-            P25Codeword::for_power(15),
-            P25Codeword::for_power(5),
-            P25Codeword::for_power(3),
-            P25Codeword::for_power(58),
-        ].into_iter().cloned()).deriv();
+        let p = TestPolynomial::new(
+            [
+                P25Codeword::for_power(0),
+                P25Codeword::for_power(5),
+                P25Codeword::for_power(3),
+                P25Codeword::for_power(58),
+                P25Codeword::for_power(43),
+                P25Codeword::for_power(15),
+                P25Codeword::for_power(5),
+                P25Codeword::for_power(3),
+                P25Codeword::for_power(58),
+                P25Codeword::for_power(43),
+                P25Codeword::for_power(15),
+                P25Codeword::for_power(5),
+                P25Codeword::for_power(3),
+                P25Codeword::for_power(58),
+                P25Codeword::for_power(43),
+                P25Codeword::for_power(15),
+                P25Codeword::for_power(5),
+                P25Codeword::for_power(3),
+                P25Codeword::for_power(58),
+                P25Codeword::for_power(43),
+                P25Codeword::for_power(15),
+                P25Codeword::for_power(5),
+                P25Codeword::for_power(3),
+                P25Codeword::for_power(58),
+            ]
+            .into_iter(),
+        )
+        .deriv();
 
         assert!(p.coef(0) == P25Codeword::for_power(5));
         assert!(p.coef(1) == P25Codeword::default());

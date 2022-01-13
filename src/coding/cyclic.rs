@@ -17,10 +17,12 @@ pub fn encode(data: u8) -> u16 {
 /// bits and `err` is the number of corrected bits. Otherwise, return `None` to indicate
 /// an unrecoverable error.
 pub fn decode(word: u16) -> Option<(u8, usize)> {
-    cai_cyclic::decode(word as u32).and_then(|(word, err)| if word >> 8 == 0 {
-        Some((word as u8, err))
-    } else {
-        None
+    cai_cyclic::decode(word as u32).and_then(|(word, err)| {
+        if word >> 8 == 0 {
+            Some((word as u8, err))
+        } else {
+            None
+        }
     })
 }
 
@@ -34,30 +36,30 @@ mod test {
         let e = encode(w);
         assert_eq!(e, 0b10101011_01111011);
 
-        assert_eq!(Some((w, 0)), decode(e^0b0000000000000000));
-        assert_eq!(Some((w, 2)), decode(e^0b1000000000000001));
-        assert_eq!(Some((w, 1)), decode(e^0b0001000000000000));
-        assert_eq!(Some((w, 2)), decode(e^0b0011000000000000));
+        assert_eq!(Some((w, 0)), decode(e ^ 0b0000000000000000));
+        assert_eq!(Some((w, 2)), decode(e ^ 0b1000000000000001));
+        assert_eq!(Some((w, 1)), decode(e ^ 0b0001000000000000));
+        assert_eq!(Some((w, 2)), decode(e ^ 0b0011000000000000));
 
-        assert_eq!(Some((w, 1)), decode(e^0b1000000000000000));
-        assert_eq!(Some((w, 1)), decode(e^0b0100000000000000));
-        assert_eq!(Some((w, 2)), decode(e^0b0010000000000001));
-        assert_eq!(Some((w, 2)), decode(e^0b0001000000000010));
-        assert_eq!(Some((w, 2)), decode(e^0b0000100000000100));
-        assert_eq!(Some((w, 2)), decode(e^0b0000010000001000));
-        assert_eq!(Some((w, 2)), decode(e^0b0000001000010000));
-        assert_eq!(Some((w, 2)), decode(e^0b0000000100100000));
-        assert_eq!(Some((w, 2)), decode(e^0b0000000011000000));
-        assert_eq!(Some((w, 2)), decode(e^0b0000000001010000));
-        assert_eq!(Some((w, 2)), decode(e^0b0000000010001000));
-        assert_eq!(Some((w, 2)), decode(e^0b0000000100000100));
-        assert_eq!(Some((w, 2)), decode(e^0b0000001000000010));
-        assert_eq!(Some((w, 2)), decode(e^0b0000010000000001));
-        assert_eq!(Some((w, 1)), decode(e^0b0000100000000000));
-        assert_eq!(Some((w, 1)), decode(e^0b0001000000000000));
-        assert_eq!(Some((w, 2)), decode(e^0b0010000000000001));
-        assert_eq!(Some((w, 2)), decode(e^0b0100000000000100));
-        assert_eq!(Some((w, 2)), decode(e^0b1000000000001000));
+        assert_eq!(Some((w, 1)), decode(e ^ 0b1000000000000000));
+        assert_eq!(Some((w, 1)), decode(e ^ 0b0100000000000000));
+        assert_eq!(Some((w, 2)), decode(e ^ 0b0010000000000001));
+        assert_eq!(Some((w, 2)), decode(e ^ 0b0001000000000010));
+        assert_eq!(Some((w, 2)), decode(e ^ 0b0000100000000100));
+        assert_eq!(Some((w, 2)), decode(e ^ 0b0000010000001000));
+        assert_eq!(Some((w, 2)), decode(e ^ 0b0000001000010000));
+        assert_eq!(Some((w, 2)), decode(e ^ 0b0000000100100000));
+        assert_eq!(Some((w, 2)), decode(e ^ 0b0000000011000000));
+        assert_eq!(Some((w, 2)), decode(e ^ 0b0000000001010000));
+        assert_eq!(Some((w, 2)), decode(e ^ 0b0000000010001000));
+        assert_eq!(Some((w, 2)), decode(e ^ 0b0000000100000100));
+        assert_eq!(Some((w, 2)), decode(e ^ 0b0000001000000010));
+        assert_eq!(Some((w, 2)), decode(e ^ 0b0000010000000001));
+        assert_eq!(Some((w, 1)), decode(e ^ 0b0000100000000000));
+        assert_eq!(Some((w, 1)), decode(e ^ 0b0001000000000000));
+        assert_eq!(Some((w, 2)), decode(e ^ 0b0010000000000001));
+        assert_eq!(Some((w, 2)), decode(e ^ 0b0100000000000100));
+        assert_eq!(Some((w, 2)), decode(e ^ 0b1000000000001000));
 
         for w in 0..=(!0u8) {
             assert_eq!(decode(encode(w as u8)), Some((w, 0)));

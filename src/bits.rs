@@ -34,10 +34,14 @@ pub trait IterParams {
     fn shift() -> usize;
 
     /// Amount to shift buffer after all buffering, so the bits are lined up at the MSB.
-    fn post_shift() -> usize { 32 - Self::shift() * Self::buffer() }
+    fn post_shift() -> usize {
+        32 - Self::shift() * Self::buffer()
+    }
 
     /// Number of iterations before buffering.
-    fn iterations() -> usize { Self::shift() * Self::buffer() / Self::bits() }
+    fn iterations() -> usize {
+        Self::shift() * Self::buffer() / Self::bits()
+    }
 
     /// Convert input symbol to a byte.
     fn to_byte(input: Self::Input) -> u8;
@@ -64,11 +68,17 @@ impl Dibit {
     }
 
     /// Get the wrapped dibit, which is guaranteed to have only 2 LSBs.
-    pub fn bits(&self) -> u8 { self.0 }
+    pub fn bits(&self) -> u8 {
+        self.0
+    }
     /// Get the MSB.
-    pub fn hi(&self) -> u8 { self.0 >> 1 }
+    pub fn hi(&self) -> u8 {
+        self.0 >> 1
+    }
     /// Get the LSB.
-    pub fn lo(&self) -> u8 { self.0 & 1 }
+    pub fn lo(&self) -> u8 {
+        self.0 & 1
+    }
 }
 
 /// Parameters for `Dibits` iterator.
@@ -78,12 +88,22 @@ impl IterParams for DibitParams {
     type Input = u8;
     type Output = Dibit;
 
-    fn bits() -> usize { 2 }
-    fn buffer() -> usize { 1 }
-    fn shift() -> usize { 8 }
+    fn bits() -> usize {
+        2
+    }
+    fn buffer() -> usize {
+        1
+    }
+    fn shift() -> usize {
+        8
+    }
 
-    fn to_byte(input: Self::Input) -> u8 { input }
-    fn to_output(bits: u8) -> Dibit { Dibit::new(bits) }
+    fn to_byte(input: Self::Input) -> u8 {
+        input
+    }
+    fn to_output(bits: u8) -> Dibit {
+        Dibit::new(bits)
+    }
 }
 
 /// Three bits.
@@ -98,7 +118,9 @@ impl Tribit {
     }
 
     /// Get the wrapped tribit, which is guaranteed to have only 3 LSBs.
-    pub fn bits(&self) -> u8 { self.0 }
+    pub fn bits(&self) -> u8 {
+        self.0
+    }
 }
 
 /// Parameters for `Tribits` iterator.
@@ -108,12 +130,22 @@ impl IterParams for TribitParams {
     type Input = u8;
     type Output = Tribit;
 
-    fn bits() -> usize { 3 }
-    fn buffer() -> usize { 3 }
-    fn shift() -> usize { 8 }
+    fn bits() -> usize {
+        3
+    }
+    fn buffer() -> usize {
+        3
+    }
+    fn shift() -> usize {
+        8
+    }
 
-    fn to_byte(input: Self::Input) -> u8 { input }
-    fn to_output(bits: u8) -> Tribit { Tribit::new(bits) }
+    fn to_byte(input: Self::Input) -> u8 {
+        input
+    }
+    fn to_output(bits: u8) -> Tribit {
+        Tribit::new(bits)
+    }
 }
 
 /// Six bits.
@@ -128,7 +160,9 @@ impl Hexbit {
     }
 
     /// Get the wrapped hexbit, which is guaranteed to have only 6 LSBs.
-    pub fn bits(&self) -> u8 { self.0 }
+    pub fn bits(&self) -> u8 {
+        self.0
+    }
 }
 
 /// Parameters for `Hexbits` iterator.
@@ -138,12 +172,22 @@ impl IterParams for HexbitParams {
     type Input = u8;
     type Output = Hexbit;
 
-    fn bits() -> usize { 6 }
-    fn buffer() -> usize { 3 }
-    fn shift() -> usize { 8 }
+    fn bits() -> usize {
+        6
+    }
+    fn buffer() -> usize {
+        3
+    }
+    fn shift() -> usize {
+        8
+    }
 
-    fn to_byte(input: Self::Input) -> u8 { input }
-    fn to_output(bits: u8) -> Hexbit { Hexbit::new(bits) }
+    fn to_byte(input: Self::Input) -> u8 {
+        input
+    }
+    fn to_output(bits: u8) -> Hexbit {
+        Hexbit::new(bits)
+    }
 }
 
 /// Parameters for `DibitBytes` iterator.
@@ -153,12 +197,22 @@ impl IterParams for DibitByteParams {
     type Input = Dibit;
     type Output = u8;
 
-    fn bits() -> usize { 8 }
-    fn buffer() -> usize { 4 }
-    fn shift() -> usize { 2 }
+    fn bits() -> usize {
+        8
+    }
+    fn buffer() -> usize {
+        4
+    }
+    fn shift() -> usize {
+        2
+    }
 
-    fn to_byte(input: Self::Input) -> u8 { input.bits() }
-    fn to_output(bits: u8) -> Self::Output { bits }
+    fn to_byte(input: Self::Input) -> u8 {
+        input.bits()
+    }
+    fn to_output(bits: u8) -> Self::Output {
+        bits
+    }
 }
 
 /// Parameters for `TribitBytes` iterator.
@@ -168,12 +222,22 @@ impl IterParams for TribitByteParams {
     type Input = Tribit;
     type Output = u8;
 
-    fn bits() -> usize { 8 }
-    fn buffer() -> usize { 8 }
-    fn shift() -> usize { 3 }
+    fn bits() -> usize {
+        8
+    }
+    fn buffer() -> usize {
+        8
+    }
+    fn shift() -> usize {
+        3
+    }
 
-    fn to_byte(input: Self::Input) -> u8 { input.bits() }
-    fn to_output(bits: u8) -> Self::Output { bits }
+    fn to_byte(input: Self::Input) -> u8 {
+        input.bits()
+    }
+    fn to_output(bits: u8) -> Self::Output {
+        bits
+    }
 }
 
 /// Parameters for `HexbitBytes` iterator.
@@ -183,17 +247,29 @@ impl IterParams for HexbitByteParams {
     type Input = Hexbit;
     type Output = u8;
 
-    fn bits() -> usize { 8 }
-    fn buffer() -> usize { 4 }
-    fn shift() -> usize { 6 }
+    fn bits() -> usize {
+        8
+    }
+    fn buffer() -> usize {
+        4
+    }
+    fn shift() -> usize {
+        6
+    }
 
-    fn to_byte(input: Self::Input) -> u8 { input.bits() }
-    fn to_output(bits: u8) -> Self::Output { bits }
+    fn to_byte(input: Self::Input) -> u8 {
+        input.bits()
+    }
+    fn to_output(bits: u8) -> Self::Output {
+        bits
+    }
 }
 
 /// An iterator for sub-byte (bit-level) values.
-pub struct SubByteIter<P, T> where
-    P: IterParams, T: Iterator<Item = P::Input>
+pub struct SubByteIter<P, T>
+where
+    P: IterParams,
+    T: Iterator<Item = P::Input>,
 {
     params: std::marker::PhantomData<P>,
     /// Source of bytes.
@@ -204,8 +280,10 @@ pub struct SubByteIter<P, T> where
     idx: u8,
 }
 
-impl<P, T> SubByteIter<P, T> where
-    P: IterParams, T: Iterator<Item = P::Input>
+impl<P, T> SubByteIter<P, T>
+where
+    P: IterParams,
+    T: Iterator<Item = P::Input>,
 {
     /// Construct a new `SubByteIter` over the given symbol source.
     pub fn new(src: T) -> SubByteIter<P, T> {
@@ -238,8 +316,10 @@ impl<P, T> SubByteIter<P, T> where
     }
 }
 
-impl<P, T> Iterator for SubByteIter<P, T> where
-    P: IterParams, T: Iterator<Item = P::Input>
+impl<P, T> Iterator for SubByteIter<P, T>
+where
+    P: IterParams,
+    T: Iterator<Item = P::Input>,
 {
     type Item = P::Output;
 
@@ -281,11 +361,7 @@ mod test {
 
     #[test]
     fn test_dibits() {
-        let bytes = [
-            0b00110011,
-            0b10011001,
-            0b11111111,
-        ];
+        let bytes = [0b00110011, 0b10011001, 0b11111111];
 
         let mut d = Dibits::new(bytes.iter().cloned());
 
@@ -349,12 +425,7 @@ mod test {
     #[test]
     fn test_tribits() {
         let bytes = [
-            0b00101001,
-            0b11001011,
-            0b10111000,
-            0b00101001,
-            0b11001011,
-            0b10111000,
+            0b00101001, 0b11001011, 0b10111000, 0b00101001, 0b11001011, 0b10111000,
         ];
         let mut t = Tribits::new(bytes.iter().cloned());
 
@@ -437,12 +508,7 @@ mod test {
     #[test]
     fn test_hexbits() {
         let bytes = [
-            0b11111100,
-            0b00001010,
-            0b10010101,
-            0b11111100,
-            0b00001010,
-            0b10010101,
+            0b11111100, 0b00001010, 0b10010101, 0b11111100, 0b00001010, 0b10010101,
         ];
 
         let mut h = Hexbits::new(bytes.iter().cloned());
@@ -461,10 +527,7 @@ mod test {
     #[test]
     #[should_panic]
     fn test_hexbits_panic() {
-        let bytes = [
-            0b11111100,
-            0b00001010,
-        ];
+        let bytes = [0b11111100, 0b00001010];
 
         let mut h = Hexbits::new(bytes.iter().cloned());
 

@@ -29,12 +29,7 @@ pub mod standard {
     }
 
     /// Generator matrix from the standard, without identity part.
-    const GEN: &[u16] = &[
-        0b11111110000,
-        0b11110001110,
-        0b11001101101,
-        0b10101011011,
-    ];
+    const GEN: &[u16] = &[0b11111110000, 0b11110001110, 0b11001101101, 0b10101011011];
 
     /// Parity-check matrix derived from generator using standard method.
     const PAR: &[u16] = &[
@@ -86,19 +81,9 @@ pub mod shortened {
         super::decode(word, PAR, LOCATIONS).map(|(w, n)| ((w >> 4) as u8, n))
     }
 
-    const GEN: &[u8] = &[
-        0b111001,
-        0b110101,
-        0b101110,
-        0b011110,
-    ];
+    const GEN: &[u8] = &[0b111001, 0b110101, 0b101110, 0b011110];
 
-    const PAR: &[u16] = &[
-        0b1110011000,
-        0b1101010100,
-        0b1011100010,
-        0b0111100001,
-    ];
+    const PAR: &[u16] = &[0b1110011000, 0b1101010100, 0b1011100010, 0b0111100001];
 
     const LOCATIONS: &[u16] = &[
         0,
@@ -127,10 +112,12 @@ fn decode<T: PrimInt>(word: T, par: &[T], locs: &[T]) -> Option<(T, usize)> {
         return Some((word, 0));
     }
 
-    locs.get(s).and_then(|&loc| if loc == T::zero() {
-        None
-    } else {
-        Some((word ^ loc, 1))
+    locs.get(s).and_then(|&loc| {
+        if loc == T::zero() {
+            None
+        } else {
+            Some((word ^ loc, 1))
+        }
     })
 }
 
@@ -143,7 +130,7 @@ mod test {
         assert_eq!(standard::encode(0), 0);
         assert_eq!(standard::encode(0b11111111111), 0b11111111111_1111);
 
-        for w in 0..1<<11 {
+        for w in 0..1 << 11 {
             assert_eq!(standard::decode(standard::encode(w)), Some((w, 0)));
         }
 
@@ -170,7 +157,7 @@ mod test {
         assert_eq!(shortened::encode(0), 0);
         assert_eq!(shortened::encode(0b111111), 0b111111_0000);
 
-        for w in 0..1<<6 {
+        for w in 0..1 << 6 {
             assert_eq!(shortened::decode(shortened::encode(w)), Some((w, 0)));
         }
 
