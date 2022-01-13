@@ -5,7 +5,11 @@ authors = ["Mick Koch <mick@kochm.co>"]
 edition = "2021"
 description = "Implementation of multiple coding schemes"
 repository = "https://github.com/vihu/code-rs"
+homepage = "https://github.com/vihu/code-rs"
 readme = "README.md"
+keywords = ["code", "reed-solomon", "bch", "golay"]
+categories = ["encoding", "decoding", "code"]
+license = "MIT"
 
 [dependencies]
 binfield_matrix = "0.2.0"
